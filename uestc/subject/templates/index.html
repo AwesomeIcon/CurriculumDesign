@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load staticfiles %}
+    <title>选课系统</title>
+    <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">HOME</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active header-tab"><a href="#">选课平台</a></li>
+                    <li class="header-tab"><a href="#">选课日志</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">黄俊钦</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">设置 <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">修改密码</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">退出登录</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mytab tab-show">
+    <table class="table">
+      <caption>已选课程</caption>
+      <thead>
+        <tr>
+            <th>课程序号</th>
+            <th>课程名称</th>
+            <th>授课老师</th>
+            <th>学分</th>
+            <th>课程安排</th>
+            <th>权重值</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>计算机网络</td>
+            <td>龚海刚</td>
+            <td>4</td>
+            <td>周二 1-2节</td>
+            <td class="modified">40</td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>计算机网络</td>
+            <td>龚海刚</td>
+            <td>4</td>
+            <td>周二 1-2节</td>
+            <td class="modified">40</td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="table">
+      <caption>可选课程</caption>
+      <thead>
+        <tr>
+            <th>课程序号</th>
+            <th>课程名称</th>
+            <th>授课老师</th>
+            <th>学分</th>
+            <th>课程安排</th>
+            <th>权重值</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>计算机网络</td>
+            <td>龚海刚</td>
+            <td>4</td>
+            <td>周二 1-2节</td>
+            <td><input type="text" style="width: 60px"/></td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>计算机网络</td>
+            <td>龚海刚</td>
+            <td>4</td>
+            <td>周二 1-2节</td>
+            <td><input type="text" style="width: 60px"/></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="container mytab">
+    <table class="table">
+      <caption>选课日志</caption>
+      <thead>
+        <tr>
+            <th>课程序号</th>
+            <th>课程名称</th>
+            <th>操作类别</th>
+            <th>操作者账号</th>
+            <th>操作者IP</th>
+            <th>选课时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>计算机网络</td>
+            <td>选课</td>
+            <td>2014060102008</td>
+            <td>192.168.1.1</td>
+            <td>2016.1.1</td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>计算机网络</td>
+            <td>选课</td>
+            <td>system</td>
+            <td>192.168.1.1</td>
+            <td>2016.1.1</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+<script type="text/javascript" src="{% static 'js/jquery-1.12.2.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
