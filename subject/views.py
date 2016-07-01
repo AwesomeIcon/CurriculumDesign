@@ -4,11 +4,25 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 import hashlib
 from django.db import connection
+from models import *
 # Create your views here.
 
 
 def login(request):
     return render_to_response('login.html')
+
+
+def user_login(request):
+    if request.method == 'POST' and request.is_ajax():
+        username = request.POST['username']
+        passwd = md5(request.POST['passwd'])
+        try:
+            Student.objects.get(uid=username, upasswd=passwd)
+            data = simplejson.dumps({"status": 0})
+            return HttpResponse(data, content_type="application/json")
+        except:
+            data = simplejson.dumps({"status": 1})
+            return HttpResponse(data, content_type="application/json")
 
 
 def index(request):
