@@ -44,6 +44,7 @@ class CSINFO(models.Model):
     tid = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     uid = models.ForeignKey(Student, on_delete=models.CASCADE)
     cid = models.ForeignKey(Course, on_delete=models.CASCADE)
+    weight = models.IntegerField()
 
     class Meta:
         unique_together = ('tid', 'uid', 'cid')
@@ -54,4 +55,4 @@ class RecordLog(models.Model):
     operate = models.CharField(max_length=10)
     cid = models.ForeignKey(Course, on_delete=models.CASCADE)
     ip = models.CharField(max_length=20)
-    time = models.DateField()
+    logtime = models.CharField(max_length=10)

@@ -5,3 +5,7 @@
 .tab-show{
     display: block;
 }
+
+.ms-controller{
+    visibility: hidden;
+}

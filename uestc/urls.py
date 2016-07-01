@@ -20,5 +20,8 @@ from subject import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.login, name='login'),
-    url(r'^index/$', views.index, name='index')
+    url(r'^index/$', views.index, name='index'),
+    url(r'^course/$', views.get_course, name='get_course'),
+    url(r'^log/$', views.get_log, name='get_log'),
+    url(r'^choose/$', views.get_already_choose, name='get_already_choose'),
 ]
