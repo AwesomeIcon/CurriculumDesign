@@ -1,5 +1,6 @@
 # -*-coding:utf8-*-
 import simplejson as simplejson
+import time
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 import hashlib
@@ -73,11 +74,37 @@ def select_course(request):
             cursor.close()
             csinfo = CSINFO(uid_id=username, tid_id=tid, cid_id=cid, weight=weight)
             csinfo.save()
+            nowdate = time.strftime('%Y-%m-%d', time.localtime())
+            recordlog = RecordLog(operate='选课', ip=get_client_ip(request), logtime=nowdate, cid_id=cid, uid_id=username)
+            recordlog.save()
             data = simplejson.dumps({"status": 0})
             return HttpResponse(data, content_type="application/json")
         except:
             data = simplejson.dumps({"status": 1})
             return HttpResponse(data, content_type="application/json")
+
+
+def cancel_course(request):
+    if request.method == "POST" and request.is_ajax():
+        username = request.COOKIES.get('username')
+        cid = request.POST['cid']
+        tname = request.POST['tname']
+        cursor = connection.cursor()
+        cursor.execute("select tid FROM subject_course,subject_teacher WHERE subject_course.tid_id=subject_teacher.tid AND subject_teacher.tname='" + tname + "' and subject_course.cid=" + cid)
+        tid = cursor.fetchone()[0]
+        cursor.execute("select id FROM subject_course where cid=" + cid + " and tid_id=" + tid)
+        cid = cursor.fetchone()[0]
+        cursor.close()
+        try:
+            csinfo = CSINFO.objects.get(uid_id=username, tid_id=tid, cid_id=cid)
+            csinfo.delete()
+            nowdate = time.strftime('%Y-%m-%d', time.localtime())
+            recordlog = RecordLog(operate='退课', ip=get_client_ip(request), logtime=nowdate, cid_id=cid, uid_id=username)
+            recordlog.save()
+            data = simplejson.dumps({"status": 0})
+        except:
+            data = simplejson.dumps({"status": 1})
+        return HttpResponse(data, content_type="application/json")
 
 
 def get_log(request):
@@ -104,3 +131,15 @@ def md5(obj):
     m = hashlib.md5()
     m.update(obj)
     return m.hexdigest()
+
+
+def get_client_ip(request):
+    try:
+        real_ip = request.META['HTTP_X_FORWARDED_FOR']
+        regip = real_ip.split(",")[0]
+    except:
+        try:
+            regip = request.META['REMOTE_ADDR']
+        except:
+            regip = "unknow"
+    return regip

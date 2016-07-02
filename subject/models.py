@@ -55,3 +55,6 @@ class RecordLog(models.Model):
     cid = models.ForeignKey(Course, on_delete=models.CASCADE)
     ip = models.CharField(max_length=20)
     logtime = models.CharField(max_length=10)
+
+    class Meta:
+        ordering = ['-id']

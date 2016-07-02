@@ -26,5 +26,6 @@ urlpatterns = [
     url(r'^log/$', views.get_log, name='get_log'),
     url(r'^choose/$', views.get_already_choose, name='get_already_choose'),
     url(r'^logout/$', views.logout, name='logout'),
-    url(r'^select/$', views.select_course, name='select_course')
+    url(r'^select/$', views.select_course, name='select_course'),
+    url(r'^cancel/$', views.cancel_course, name='cancel_course')
 ]
