@@ -20,15 +20,15 @@
                     <li class="header-tab"><a href="#">选课日志</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">黄俊钦</a></li>
-                    <li><a href="#">2014060102008</a></li>
-                    <li><a href="#">权重值:<span>100</span></a></li>
+                    <li><a href="#">{{ name }}</a></li>
+                    <li><a href="#">{{ id }}</a></li>
+                    <li><a href="#">权重值:{{ weight }}</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">设置 <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="#">修改密码</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="#">退出登录</a></li>
+                            <li><a href="/logout/">退出登录</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -57,7 +57,7 @@
             <td>{& el[3] &}</td>
             <td>{& el[4] &}</td>
             <td class="modified">{& el[5] &}</td>
-            <td><a href="#">退课</a></td>
+            <td><a href="#" class="cancel_course">退课</a></td>
         </tr>
       </tbody>
     </table>
@@ -82,7 +82,7 @@
             <td>{& el[3] &}</td>
             <td>{& el[4] &}</td>
             <td><input type="text" style="width: 60px"/></td>
-            <td><a href="#">选课</a></td>
+            <td><a href="#" class="select_course">选课</a></td>
         </tr>
       </tbody>
     </table>
@@ -115,6 +115,7 @@
     <script type="text/javascript" src="{% static 'js/jquery-1.12.2.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/avalon.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/csrf.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

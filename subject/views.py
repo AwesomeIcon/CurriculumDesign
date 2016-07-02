@@ -1,6 +1,6 @@
 # -*-coding:utf8-*-
 import simplejson as simplejson
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 import hashlib
 from django.db import connection
@@ -12,12 +12,67 @@ def login(request):
     return render_to_response('login.html')
 
 
+def logout(request):
+    response = HttpResponseRedirect("/")
+    response.delete_cookie('username')
+    return response
+
+
 def user_login(request):
     if request.method == 'POST' and request.is_ajax():
         username = request.POST['username']
         passwd = md5(request.POST['passwd'])
+        stu = Student.objects.filter(uid=username, upasswd=passwd)
+        if stu:
+            data = simplejson.dumps({"status": 0})
+            response = HttpResponse(data, content_type="application/json")
+            response.set_cookie('username', username, 3600)
+            return response
+        else:
+            data = simplejson.dumps({"status": 1})
+            return HttpResponse(data, content_type="application/json")
+
+
+def index(request):
+    try:
+        username = request.COOKIES.get('username')
+        stu = Student.objects.get(uid=username).uname
+        cursor = connection.cursor()
+        cursor.execute("select sum(weight) from subject_csinfo WHERE uid_id=" + username)
+        query_set = cursor.fetchone()[0]
+        cursor.close()
+        if query_set is None:
+            query_set = 0
+        return render_to_response('index.html', {"id": username, "name": stu, "weight": 100-query_set})
+    except:
+        return HttpResponseRedirect('/')
+
+
+def get_course(request):
+    if request.method == "GET":
+        username = request.COOKIES.get('username')
+        cursor = connection.cursor()
+        cursor.execute("select cid,cname,tname,ccredit,cclass from subject_course,subject_teacher where subject_course.tid_id = subject_teacher.tid AND tid NOT IN (SELECT tid_id FROM subject_csinfo WHERE uid_id = " + username + ")")
+        query_set = simplejson.dumps(cursor.fetchall())
+        cursor.close()
+        return HttpResponse(query_set, content_type="application/json")
+
+
+def select_course(request):
+    if request.method == "POST" and request.is_ajax():
+        username = request.COOKIES.get('username')
+        cid = request.POST['cid']
+        tname = request.POST['tname']
+        weight = request.POST['weight']
         try:
-            Student.objects.get(uid=username, upasswd=passwd)
+            cursor = connection.cursor()
+            cursor.execute("select tid FROM subject_course,subject_teacher WHERE subject_course.tid_id=subject_teacher.tid AND subject_teacher.tname='" + tname + "' and subject_course.cid=" + cid)
+            tid = cursor.fetchone()[0]
+            cursor.execute("select id FROM subject_course where cid=" + cid + " and tid_id=" + tid)
+            cid = cursor.fetchone()[0]
+            cursor.close()
+            csinfo = CSINFO(uid_id=username, tid_id=tid, cid_id=cid, weight=weight)
+            csinfo.save()
             data = simplejson.dumps({"status": 0})
             return HttpResponse(data, content_type="application/json")
         except:
@@ -25,23 +80,11 @@ def user_login(request):
             return HttpResponse(data, content_type="application/json")
 
 
-def index(request):
-    return render_to_response('index.html')
-
-
-def get_course(request):
-    if request.method == "GET":
-        cursor = connection.cursor()
-        cursor.execute("select cid,cname,tname,ccredit,cclass from subject_course,subject_teacher where subject_course.tid_id = subject_teacher.tid")
-        query_set = simplejson.dumps(cursor.fetchall())
-        cursor.close()
-        return HttpResponse(query_set, content_type="application/json")
-
-
 def get_log(request):
     if request.method == "GET":
+        username = request.COOKIES.get('username')
         cursor = connection.cursor()
-        cursor.execute("select subject_course.cid,cname,operate,subject_student.uid,ip,logtime from subject_course,subject_student,subject_recordlog where subject_student.uid = subject_recordlog.uid_id AND subject_course.id = subject_recordlog.cid_id")
+        cursor.execute("select subject_course.cid,cname,operate,subject_student.uid,ip,logtime from subject_course,subject_student,subject_recordlog where subject_student.uid = subject_recordlog.uid_id AND subject_course.id = subject_recordlog.cid_id AND subject_student.uid = " + username)
         query_set = simplejson.dumps(cursor.fetchall())
         cursor.close()
         return HttpResponse(query_set, content_type="application/json")
@@ -49,8 +92,9 @@ def get_log(request):
 
 def get_already_choose(request):
     if request.method == "GET":
+        username = request.COOKIES.get('username')
         cursor = connection.cursor()
-        cursor.execute("select cid,cname,tname,ccredit,cclass,weight from subject_csinfo,subject_course,subject_teacher,subject_student WHERE subject_student.uid = subject_csinfo.uid_id AND subject_teacher.tid = subject_csinfo.tid_id AND subject_course.id = subject_csinfo.cid_id")
+        cursor.execute("select cid,cname,tname,ccredit,cclass,weight from subject_csinfo,subject_course,subject_teacher,subject_student WHERE subject_student.uid = subject_csinfo.uid_id AND subject_teacher.tid = subject_csinfo.tid_id AND subject_course.id = subject_csinfo.cid_id AND subject_student.uid = " + username)
         query_set = simplejson.dumps(cursor.fetchall())
         cursor.close()
         return HttpResponse(query_set, content_type="application/json")

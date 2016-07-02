@@ -15,7 +15,6 @@ class Student(models.Model):
     uname = models.CharField(max_length=20)
     usex = models.CharField(max_length=2, choices=SEX)
     upasswd = models.CharField(max_length=32)
-    utotal = models.IntegerField(default=100)
 
 
 class Teacher(models.Model):
