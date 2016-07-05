@@ -13,6 +13,10 @@ def login(request):
     return render_to_response('login.html')
 
 
+def admin_login(request):
+    return render_to_response('admin_login.html')
+
+
 def logout(request):
     response = HttpResponseRedirect("/")
     response.delete_cookie('username')
@@ -32,6 +36,15 @@ def user_login(request):
         else:
             data = simplejson.dumps({"status": 1})
             return HttpResponse(data, content_type="application/json")
+
+
+def admin_index(request):
+    try:
+        username = request.COOKIES.get('username')
+        stu = Student.objects.get(uid=username).uname
+        return render_to_response('admin_index.html', {"id": username, "name": stu})
+    except:
+        return HttpResponseRedirect('/admin/')
 
 
 def index(request):
@@ -82,6 +95,36 @@ def select_course(request):
         except:
             data = simplejson.dumps({"status": 1})
             return HttpResponse(data, content_type="application/json")
+
+
+def list_course(request):
+    if request.method == "GET" and request.COOKIES.get('username') == 'admin':
+        cursor = connection.cursor()
+        cursor.execute(
+            "select cid,cname,tname,ccredit,cclass from subject_course,subject_teacher where subject_course.tid_id = subject_teacher.tid")
+        query_set = simplejson.dumps(cursor.fetchall())
+        cursor.close()
+        return HttpResponse(query_set, content_type="application/json")
+
+
+def list_student(request):
+    if request.method == "GET" and request.COOKIES.get('username') == 'admin':
+        cursor = connection.cursor()
+        cursor.execute(
+            "select uid,uname,usex from subject_student where uid != 'admin'")
+        query_set = simplejson.dumps(cursor.fetchall())
+        cursor.close()
+        return HttpResponse(query_set, content_type="application/json")
+
+
+def list_teacher(request):
+    if request.method == "GET" and request.COOKIES.get('username') == 'admin':
+        cursor = connection.cursor()
+        cursor.execute(
+            "select tid,tname,tsex,ttitle from subject_teacher")
+        query_set = simplejson.dumps(cursor.fetchall())
+        cursor.close()
+        return HttpResponse(query_set, content_type="application/json")
 
 
 def cancel_course(request):
@@ -143,3 +186,86 @@ def get_client_ip(request):
         except:
             regip = "unknow"
     return regip
+
+
+def delete_course(request):
+    if request.method == 'POST' and request.COOKIES.get('username') == 'admin' and request.is_ajax():
+        cid = request.POST['cid']
+        tname = request.POST['tname']
+        cursor = connection.cursor()
+        cursor.execute(
+            "select tid FROM subject_course,subject_teacher WHERE subject_course.tid_id=subject_teacher.tid AND subject_teacher.tname='" + tname + "' and subject_course.cid=" + cid)
+        tid = cursor.fetchone()[0]
+        cursor.close()
+        course = Course.objects.get(cid=cid, tid_id=tid)
+        course.delete()
+        data = simplejson.dumps({"status": 0})
+        return HttpResponse(data, content_type="application/json")
+
+
+def add_course(request):
+    if request.method == 'POST' and request.COOKIES.get('username') == 'admin' and request.is_ajax():
+        cid = request.POST['cid']
+        cname = request.POST['cname']
+        credit = request.POST['credit']
+        cclass = request.POST['cclass']
+        tid = request.POST['tid']
+        teacher = Teacher.objects.filter(tid=tid)
+        if teacher:
+            course = Course(cid=cid, cname=cname, ccredit=credit, cclass=cclass, tid_id=tid)
+            course.save()
+            data = simplejson.dumps({"status": 0})
+        else:
+            data = simplejson.dumps({"status": 1})
+        return HttpResponse(data, content_type="application/json")
+
+
+def add_student(request):
+    if request.method == 'POST' and request.COOKIES.get('username') == 'admin' and request.is_ajax():
+        uid = request.POST['uid']
+        uname = request.POST['uname']
+        usex = request.POST['usex']
+        stu = Student(uid=uid, uname=uname, usex=usex, upasswd=md5('123456'))
+        try:
+            stu.save()
+            data = simplejson.dumps({"status": 0})
+        except:
+            data = simplejson.dumps({"status": 1})
+        return HttpResponse(data, content_type="application/json")
+
+
+def reset_passwd(request):
+    if request.method == 'POST' and request.COOKIES.get('username') == 'admin' and request.is_ajax():
+        uid = request.POST['uid']
+        stu = Student.objects.get(uid=uid)
+        try:
+            stu.upasswd = md5("123456")
+            stu.save()
+            data = simplejson.dumps({"status": 0})
+        except:
+            data = simplejson.dumps({"status": 1})
+        return HttpResponse(data, content_type="application/json")
+
+
+def delete_teacher(request):
+    if request.method == 'POST' and request.COOKIES.get('username') == 'admin' and request.is_ajax():
+        tid = request.POST['tid']
+        teacher = Teacher.objects.get(tid=tid)
+        teacher.delete()
+        data = simplejson.dumps({"status": 0})
+        return HttpResponse(data, content_type="application/json")
+
+
+def add_teacher(request):
+    if request.method == 'POST' and request.COOKIES.get('username') == 'admin' and request.is_ajax():
+        tid = request.POST['tid']
+        tname = request.POST['tname']
+        tsex = request.POST['tsex']
+        ttitle = request.POST['ttitle']
+        teacher = Teacher(tid=tid, tname=tname, tsex=tsex, ttitle=ttitle)
+        try:
+            teacher.save()
+            data = simplejson.dumps({"status": 0})
+        except:
+            data = simplejson.dumps({"status": 1})
+        return HttpResponse(data, content_type="application/json")
