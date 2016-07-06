@@ -38,4 +38,6 @@ urlpatterns = [
     url(r'^admin/resetPassword/$', views.reset_passwd, name='reset_passwd'),
     url(r'^admin/delete/teacher/$', views.delete_teacher, name='delete_teacher'),
     url(r'^admin/add/teacher/$', views.add_teacher, name='add_teacher'),
+    url(r'^search/$', views.search, name='search'),
+    url(r'^password/$', views.change_passwd, name='change_passwd'),
 ]

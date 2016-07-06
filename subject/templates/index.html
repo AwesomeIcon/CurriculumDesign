@@ -26,8 +26,8 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">设置 <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-{#                            <li><a href="#">修改密码</a></li>#}
-{#                            <li role="separator" class="divider"></li>#}
+                            <li><a href="#" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">修改密码</a></li>
+                            <li role="separator" class="divider"></li>
                             <li><a href="/logout/">退出登录</a></li>
                         </ul>
                     </li>
@@ -61,6 +61,12 @@
         </tr>
       </tbody>
     </table>
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" id="search">搜索</button>
+      </span>
+      <input type="text" class="form-control" placeholder="查找可选课程">
+    </div>
     <table class="table">
       <caption>可选课程</caption>
       <thead>
@@ -112,6 +118,33 @@
       </tbody>
     </table>
     </div>
+{#模态框#}
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">修改密码</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="message-text" class="control-label">原密码:</label>
+            <input class="form-control" type="password" id="oldpasswd">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="control-label">新密码:</label>
+            <input class="form-control" type="password" id="newpasswd">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="change_passwd">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
     <script type="text/javascript" src="{% static 'js/jquery-1.12.2.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/avalon.js' %}"></script>

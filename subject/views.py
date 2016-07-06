@@ -269,3 +269,32 @@ def add_teacher(request):
         except:
             data = simplejson.dumps({"status": 1})
         return HttpResponse(data, content_type="application/json")
+
+
+def search(request):
+    if request.method == 'POST' and request.is_ajax():
+        username = request.COOKIES.get('username')
+        content = request.POST['content']
+        cursor = connection.cursor()
+        cursor.execute("select cid,cname,tname,ccredit,cclass from subject_course,subject_teacher where subject_course.tid_id = subject_teacher.tid AND tid NOT IN (SELECT tid_id FROM subject_csinfo WHERE uid_id = " + username + ") and cname like '%" + content + "%'")
+        query_set = simplejson.dumps(cursor.fetchall())
+        cursor.close()
+        return HttpResponse(query_set, content_type="application/json")
+
+
+def change_passwd(request):
+    if request.method == 'POST' and request.is_ajax():
+        username = request.COOKIES.get('username')
+        oldpasswd = request.POST['oldpasswd']
+        newpasswd = request.POST['newpasswd']
+        try:
+            stu = Student.objects.get(uid=username, upasswd=md5(oldpasswd))
+            stu.upasswd = md5(newpasswd)
+            stu.save()
+            data = simplejson.dumps({"status": 0})
+            response = HttpResponse(data, content_type="application/json")
+            response.delete_cookie(username)
+        except:
+            data = simplejson.dumps({"status": 1})
+            response = HttpResponse(data, content_type="application/json")
+        return response

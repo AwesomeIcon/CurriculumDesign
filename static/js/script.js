@@ -95,4 +95,53 @@ $(function () {
                 }
             })
     });
+    //查询课程
+    $(document).on("click","#search",function () {
+        var content = $(this).parent().parent().find("input").eq(0).val();
+        $.ajax({
+            url:"/search/",
+            type:"POST",
+            dataType:"json",
+            data:{
+                "content":content
+            },
+            success:function (data) {
+                course.data = data;
+            },
+            error:function () {
+                alert("服务器不太给力啊！");
+            }
+        })
+    });
+    //修改密码
+    $(document).on("click","#change_passwd",function () {
+        var oldpasswd = $("#oldpasswd").val();
+        var newpasswd = $("#newpasswd").val();
+        if(oldpasswd == "" || newpasswd == ""){
+            alert("密码不能为空！");
+        }else if(oldpasswd == newpasswd){
+            alert("新密码不能和旧密码相同！");
+        }else{
+            $.ajax({
+                url:"/password/",
+                type:"POST",
+                dataType:"json",
+                data:{
+                    "oldpasswd":oldpasswd,
+                    "newpasswd":newpasswd,
+                },
+                success:function (data) {
+                    if(data.status == 0){
+                        alert("修改成功，请重新登录！");
+                        window.location.href = "/";
+                    }else{
+                        alert("操作失败！");
+                    }
+                },
+                error:function () {
+                    alert("服务器不太给力啊！");
+                }
+            })
+        }
+    });
 });
